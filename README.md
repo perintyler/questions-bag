@@ -25,6 +25,27 @@ if (!outcome.answered) {
 }
 ```
 
+## Installing
+
+```bash
+git clone https://github.com/perintyler/questions-bag.git ~/repos/bags/questions
+cd ~/repos/bags/questions && pnpm install
+barry install ~/repos/bags/questions --as questions
+barry pack questions
+```
+
+**The clone has to sit beside a Barry checkout.** `package.json` resolves
+`@barry-rocks/tools` and `@barry-rocks/logger` through `link:../../barry/...`,
+the same convention every bag in the aggregator uses — so `~/repos/bags/questions`
+alongside `~/repos/barry` works, and an arbitrary path fails to typecheck. The
+tests pass either way, which makes the wrong layout easy to miss: run
+`npx tsc --noEmit` to confirm.
+
+**Pack this before relying on it.** Barry denies the coding agent's built-in
+question picker for every session, so a barry without this bag packed has no way
+to ask at all — not a degraded one, none. `questions` is not a default trait; it
+reaches a session only through `barry pack`.
+
 ## Why this exists
 
 The coding agent ships its own question picker, and it is a good one — in a
