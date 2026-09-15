@@ -1,0 +1,47 @@
+version: v0.1
+name: questions
+description: >-
+  Ask the user a question and wait for the answer — with somewhere for it to
+  land. Owns the store, a service the UIs can reach, macOS notifications with
+  inline answer buttons, a native app, and a web page. Replaces the coding
+  agent's built-in question picker, which only exists when someone is sitting
+  at the terminal.
+
+tools:
+  entry: tools.ts
+
+services:
+  api:
+    description: Questions store — pending questions, answers, and deadline enforcement
+    command: pnpm
+    args: ["exec", "tsx", "server/src/index.ts"]
+    working-directory: .
+    port: 3869
+    health: /health
+    run-at-load: true
+    keep-alive: true
+    env:
+      # The service is the only writer the app and the web page can reach, so
+      # it must come up with the same secret they send. Listed here means
+      # REQUIRED: a doctor run flags it if a barry has not bound it.
+      - BARRY_SECRET
+
+apps:
+  Questions:
+    description: Answer questions from agent sessions
+    platform: macos
+    build:
+      command: questions-app/build.sh
+      output: questions-app/.build/Questions.app
+    bundle-id: com.barry.questions
+    # The notification and the web page deep-link to a single question rather
+    # than dumping the reader in a list they have to search.
+    url-schemes: [barry-question]
+    # Not a login item. Answering is occasional work and the notification is
+    # the entry point, so the app opens on demand and quits with its window —
+    # same posture as BarryIdentities and Plans, for the same reason.
+    login-item: false
+
+# No `traits:` block. The auto-trait `questions` (readwrite over the namespace)
+# is exactly right, and declaring it by hand would duplicate the name and make
+# it ambiguous which definition applies.

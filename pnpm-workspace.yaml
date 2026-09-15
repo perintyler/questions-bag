@@ -1,0 +1,8 @@
+packages: []
+allowBuilds:
+  # vitest's bundler. Without this, pnpm skips esbuild's postinstall and the
+  # test suite cannot start.
+  esbuild: true
+  # Compiles the native SQLite binding. Skipping it leaves a package that
+  # imports cleanly and throws at first query.
+  better-sqlite3: true

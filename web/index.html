@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Questions</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/app.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❓</text></svg>">
+</head>
+<body>
+  <header>
+    <span class="brand">Questions</span>
+    <span id="health" class="health" aria-live="polite"></span>
+  </header>
+
+  <main id="pane">
+    <!-- Filled by app.js. The empty state is deliberately explicit about the
+         difference between "nothing was asked" and "we cannot tell", because
+         those call for very different reactions from whoever is reading. -->
+    <div id="list" aria-live="polite"></div>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

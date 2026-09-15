@@ -1,0 +1,30 @@
+{
+  "name": "@barry-bags/questions",
+  "version": "1.0.0",
+  "description": "Ask the user a question and wait for the answer — with somewhere for it to land",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "scripts": {
+    "dev": "tsx --watch server/src/index.ts",
+    "start": "tsx server/src/index.ts",
+    "start:prod": "node --import tsx server/src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@barry-rocks/logger": "link:../../barry/packages/logger",
+    "@barry-rocks/tools": "link:../../barry/packages/tools",
+    "better-sqlite3": "12.10.0",
+    "express": "4.22.1",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "7.6.13",
+    "@types/express": "4.17.21",
+    "@types/node": "22.15.0",
+    "tsx": "4.23.12",
+    "typescript": "5.9.3",
+    "vitest": "4.1.0"
+  }
+}

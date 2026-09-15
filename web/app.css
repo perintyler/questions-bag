@@ -1,0 +1,142 @@
+/* ============================================================
+   Shares the barryLight palette with the Plans web app and the
+   macOS apps: paper, ink, antique gold spent only on the active
+   thing. Hairlines over boxes, whitespace over chrome.
+   ============================================================ */
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --ink: #1c1917;
+  --muted: #57534e;
+  --faint: #a8a29e;
+  --line: #eae6df;
+  --accent: #c49332;
+  --ok: #14805a;
+  --err: #b91c1c;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.65 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; background: var(--bg); z-index: 2;
+}
+.brand { font-weight: 600; letter-spacing: -0.01em; }
+.health { font-size: 12.5px; color: var(--muted); font-family: var(--mono); }
+.health.bad { color: var(--err); }
+
+main { max-width: 760px; margin: 0 auto; padding: 24px 24px 96px; }
+
+/* A question card. Pending ones carry the gold edge; settled ones fade back
+   so the eye lands on what still needs a person. */
+.q {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.q.pending { border-left: 3px solid var(--accent); }
+.q.settled { opacity: 0.62; }
+
+.q-head {
+  display: flex; align-items: baseline; gap: 10px;
+  font-size: 12.5px; color: var(--faint); font-family: var(--mono);
+  margin-bottom: 10px;
+}
+.q-state { text-transform: uppercase; letter-spacing: 0.04em; }
+.q-state.answered { color: var(--ok); }
+.q-state.expired, .q-state.dismissed { color: var(--err); }
+.q-state.pending { color: var(--accent); }
+
+.q-context {
+  color: var(--muted); font-size: 14px;
+  margin: 0 0 16px; padding-left: 12px;
+  border-left: 2px solid var(--line);
+}
+
+.ask { margin-bottom: 18px; }
+.ask:last-of-type { margin-bottom: 8px; }
+.ask-header {
+  display: inline-block; font-size: 11.5px; font-family: var(--mono);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 4px;
+  padding: 1px 7px; margin-bottom: 7px;
+}
+.ask-question { font-weight: 500; margin: 0 0 10px; }
+
+.options { display: flex; flex-direction: column; gap: 7px; }
+.opt {
+  display: flex; align-items: flex-start; gap: 10px;
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 12px; cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.opt:hover { border-color: var(--accent); }
+.opt.on { border-color: var(--accent); background: #fdfbf5; }
+.opt input { margin-top: 3px; accent-color: var(--accent); }
+.opt-label { font-weight: 500; }
+.opt-desc { display: block; color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+/* Previews are the reason this UI beats a terminal popover: the choice is
+   often best judged by looking at the thing rather than its label. */
+.opt-preview {
+  display: block; margin-top: 8px; padding: 9px 11px;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+  font: 12.5px/1.5 var(--mono); white-space: pre; overflow-x: auto;
+  color: var(--muted);
+}
+
+textarea {
+  width: 100%; min-height: 78px; resize: vertical;
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 12px; font: 14px/1.6 var(--sans); color: var(--ink);
+  background: var(--surface);
+}
+textarea:focus { outline: none; border-color: var(--accent); }
+
+.actions { display: flex; gap: 10px; align-items: center; margin-top: 14px; }
+button {
+  font: 500 14px var(--sans); border-radius: 7px; padding: 8px 16px;
+  border: 1px solid var(--line); background: var(--surface);
+  color: var(--ink); cursor: pointer;
+}
+button.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+button.primary:disabled { opacity: 0.35; cursor: not-allowed; }
+button.quiet { color: var(--muted); }
+button:not(:disabled):hover { border-color: var(--accent); }
+
+.answer-given {
+  font-size: 13.5px; color: var(--muted);
+  padding-left: 12px; border-left: 2px solid var(--ok);
+}
+.answer-given .who { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+
+/* The empty and error states say which of the two they are. "Nothing asked"
+   and "we cannot reach the service" must never look the same — one is calm,
+   the other means an agent may be blocked with nobody able to see it. */
+.state-panel { text-align: center; color: var(--muted); padding: 64px 20px; }
+.state-panel.err { color: var(--err); }
+.state-panel .hint { display: block; font-size: 13.5px; color: var(--faint); margin-top: 8px; }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #171614; --surface: #201e1b; --ink: #f0ede8; --muted: #a8a29e;
+    --faint: #6f6a64; --line: #302c27; --accent: #d4a544;
+  }
+  .opt.on { background: #262219; }
+  button.primary { background: var(--accent); color: #171614; border-color: var(--accent); }
+}
