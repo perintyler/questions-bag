@@ -249,14 +249,16 @@ export const status = defineTool({
     let service: { reachable: boolean; healthy: boolean; detail: string };
     try {
       const response = await fetch(url, { signal: AbortSignal.timeout(3_000) });
-      const body = (await response.json().catch(() => ({}))) as { sweeper?: string };
+      const body = (await response.json().catch(() => ({}))) as {
+        sweeper?: { last_sweep_at?: string | null };
+      };
       service = {
         reachable: true,
         // A 503 here is the service telling us its sweeper is stale. Reporting
         // that as "up" is exactly the kind of check that cannot fail.
         healthy: response.ok,
         detail: response.ok
-          ? `healthy (sweeper last ran ${body.sweeper ?? "unknown"})`
+          ? `healthy (sweeper last ran ${body.sweeper?.last_sweep_at ?? "unknown"})`
           : `unhealthy: HTTP ${response.status} — questions may never expire`,
       };
     } catch (error) {
