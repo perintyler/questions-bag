@@ -18,6 +18,17 @@ services:
     working-directory: .
     port: 3869
     health: /health
+    # Reachable from a phone. The listener stays bound to loopback; Caddy
+    # terminates on the tailnet and proxies here, which is how every other bag
+    # is exposed (see point-guard, plans, metrics). A raw service port is NOT
+    # reachable from a phone — bags/point-guard-ios points at one and its
+    # device path has never worked.
+    #
+    # This widens who can reach the service, so `/config` was tightened in the
+    # same change: a proxied request presents as loopback, and a socket-only
+    # guard would have started serving BARRY_SECRET to the whole tailnet
+    # without failing in any visible way. See server/src/loopback.ts.
+    host: questions.barry.lan
     run-at-load: true
     keep-alive: true
     env:

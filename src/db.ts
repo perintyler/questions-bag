@@ -46,9 +46,9 @@ export function initSchema(db: QuestionDb): void {
       -- someone answers; an answered row always has it.
       answer TEXT,
       state TEXT NOT NULL CHECK (state IN ('pending','answered','expired','dismissed')),
-      -- Which surface settled it: 'notification', 'app', 'web', 'cli'. A
-      -- question answered by nobody has this NULL, which is how the store
-      -- tells "they chose" from "it ran out".
+      -- Which surface settled it: 'notification', 'app', 'web', 'cli',
+      -- 'ios'. A question answered by nobody has this NULL, which is how
+      -- the store tells "they chose" from "it ran out".
       answered_by TEXT,
       answered_at TEXT,
       expires_at TEXT NOT NULL,

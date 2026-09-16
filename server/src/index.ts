@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createLogger } from "@barry-rocks/logger";
 import { sweeperHealth } from "./health.js";
+import { isDirectLoopback } from "./loopback.js";
 import {
   createQuestion,
   getQuestion,
@@ -74,20 +75,20 @@ function authorize(req: express.Request, res: express.Response): boolean {
  * catch it if the bind address ever widened. Handing the page a credential
  * keeps one code path: every client authenticates, including this one.
  *
- * Loopback-only, like the listener. A request that reaches here has already
- * cleared the same boundary as the answers it is about to post.
+ * Served only to a DIRECT loopback caller — see `isDirectLoopback`. The phone
+ * app deliberately does not use this route; it carries a secret entered once
+ * into the keychain, because a client that bootstraps its credential from an
+ * unauthenticated endpoint does not really have one.
  */
 app.get("/config", (req, res) => {
-  const remote = req.socket.remoteAddress ?? "";
-  const isLoopback = remote === "127.0.0.1" || remote === "::1" || remote === "::ffff:127.0.0.1";
-  if (!isLoopback) {
+  if (!isDirectLoopback(req)) {
     res.status(403).json({ error: "forbidden" });
     return;
   }
   res.json({ secret: SECRET });
 });
 
-const SURFACES: Surface[] = ["notification", "app", "web", "cli"];
+const SURFACES: Surface[] = ["notification", "app", "web", "cli", "ios"];
 
 function toSurface(value: unknown): Surface | null {
   return typeof value === "string" && (SURFACES as string[]).includes(value)

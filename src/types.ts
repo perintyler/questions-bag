@@ -90,4 +90,4 @@ export interface Outcome {
 }
 
 /** Where an answer came from, or where delivery was attempted. */
-export type Surface = "notification" | "app" | "web" | "cli";
+export type Surface = "notification" | "app" | "web" | "cli" | "ios";
