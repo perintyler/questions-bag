@@ -25,6 +25,16 @@ if (!outcome.answered) {
 }
 ```
 
+## Asking well
+
+`ask` takes the questions, an optional `context` sentence explaining why you are
+asking, a `requester` label for auditing, and a `ttl_minutes` deadline that
+defaults to four hours.
+
+Ask only what changes what you do next. A question the agent could settle from
+the request, the code, or a sensible default costs the user attention and buys
+nothing.
+
 ## Installing
 
 ```bash
@@ -58,6 +68,12 @@ the familiar shape — several questions, options with descriptions, previews,
 multi-select — and drops the limits that only made sense for a popover: there
 is no cap on options, and a question with no options at all is free text rather
 than an "Other" escape hatch.
+
+It also replaced an earlier `/api/v1/questions` route and an `ask_question` tool
+in Barry's `system` bag, retired in `ec570e5b`. That path stored a question
+against a `messages` row, so it needed a session and a transcript sequence, and
+in practice it was write-only: questions went in and nothing ever showed them to
+anyone.
 
 ## What is worth knowing before changing anything here
 
@@ -114,6 +130,25 @@ The service exists because the UIs cannot open a bag's SQLite file. Its
 `/health` reports the sweeper's last run and **503s when it goes stale** — a
 service answering a bare "ok" with a dead sweeper would leave questions pending
 forever behind a green light.
+
+## Operating
+
+`status` is the end-to-end check: the store, the service, and whether any
+surface is in a position to show a question to a human.
+
+The field that matters is **`pendingNobodyHasSeen`**. Pending questions no
+surface has picked up are agents blocked on a person who does not know they were
+asked. Anything above zero means asking is broken right now, whatever else the
+report says, and `status` returns `degraded` on that alone.
+
+The deadline is enforced in `ask` as well as in the sweeper. Waiting only on the
+sweeper would hang forever in exactly the case where the service is the thing
+that has broken.
+
+The app is deliberately **not a login item**. Answering is occasional work and
+the notification is the entry point, so it opens on demand, deep-links to a
+single question through the `barry-question:` URL scheme, and quits with its
+window.
 
 ## Tests and QA
 
