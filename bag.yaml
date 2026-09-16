@@ -53,6 +53,17 @@ apps:
     # same posture as BarryIdentities and Plans, for the same reason.
     login-item: false
 
+  QuestionsiOS:
+    description: Answer questions from a phone, away from the Mac
+    platform: ios
+    project: questions-ios
+    scheme: Questions
+    bundle-id: rocks.barry.questions.app
+    # No paid-only entitlements (no app groups, push, or keychain sharing), so
+    # a free personal team can sign this for a device. The cost is that it
+    # cannot receive a push: it only shows a question while it is open.
+    device: true
+
 # No `traits:` block. The auto-trait `questions` (readwrite over the namespace)
 # is exactly right, and declaring it by hand would duplicate the name and make
 # it ambiguous which definition applies.
