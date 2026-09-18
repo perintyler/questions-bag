@@ -28,6 +28,20 @@ struct ServerConfig: Equatable {
 
     static let defaultsKeyBase = "server.baseURL"
 
+    /// The shipped default that was in force when `baseURL` was saved.
+    ///
+    /// `UserDefaults` survives reinstalling the app, so without this a base URL
+    /// saved once outlives every future default: shipping a new address changes
+    /// nothing, the app keeps dialling the old one, and the failure is a
+    /// connection timeout that looks like the server being down. That is
+    /// exactly what happened when the device path moved off a hardcoded
+    /// Tailscale IP — every app had the new default compiled in and ignored it.
+    ///
+    /// Storing the default alongside the value distinguishes the two cases a
+    /// bare saved string cannot: a value the user typed (keep it — they meant
+    /// it) from one that is merely a fossil of an older build (discard it).
+    static let defaultsKeyBaseOrigin = "server.baseURL.defaultAtSave"
+
     /// This app's OWN keychain item, never shared with the other Barry apps.
     /// Two apps sharing one item would mean signing out of either silently
     /// signs out the other, and the secret is cheap to enter twice.
@@ -64,13 +78,50 @@ struct ServerConfig: Equatable {
 
         let d = UserDefaults.standard
         var c = platformDefault
-        if let base = d.string(forKey: defaultsKeyBase), !base.isEmpty { c.baseURL = base }
+        c.baseURL = resolveBaseURL(
+            saved: d.string(forKey: defaultsKeyBase),
+            savedUnderDefault: d.string(forKey: defaultsKeyBaseOrigin),
+            currentDefault: c.baseURL
+        )
         c.secret = Keychain.read(key: keychainSecretKey) ?? ""
         return c
     }
 
+    /// Which base URL wins: the saved one, or the shipped default.
+    ///
+    /// Pure so the rule can be tested without touching `UserDefaults`, which is
+    /// process-wide state that a test cannot set without affecting the app.
+    ///
+    /// - Parameter savedUnderDefault: the shipped default at the time `saved`
+    ///   was written. `nil` means the value predates this bookkeeping.
+    static func resolveBaseURL(
+        saved: String?,
+        savedUnderDefault: String?,
+        currentDefault: String
+    ) -> String {
+        guard let saved, !saved.isEmpty else { return currentDefault }
+
+        // Written before this app recorded origins. It cannot be told apart
+        // from a deliberate choice, so trust the default instead: a stale
+        // fossil times out with no way for the user to know why, while a
+        // genuine custom address is one visible edit away in Settings.
+        guard let savedUnderDefault else { return currentDefault }
+
+        // The saved value IS the default it was saved under — the user never
+        // chose it, they just inherited whatever shipped. A newer default
+        // supersedes it.
+        if saved == savedUnderDefault { return currentDefault }
+
+        // Saved differs from the default in force at the time, so the user
+        // typed it. Their choice outranks a new default.
+        return saved
+    }
+
     func save() {
         UserDefaults.standard.set(baseURL, forKey: Self.defaultsKeyBase)
+        // Stamp the default this was saved against, so a later build can tell
+        // an inherited value from a chosen one.
+        UserDefaults.standard.set(Self.platformDefault.baseURL, forKey: Self.defaultsKeyBaseOrigin)
         if secret.isEmpty {
             Keychain.delete(key: Self.keychainSecretKey)
         } else {

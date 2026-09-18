@@ -12,6 +12,7 @@
 		3AA985A69A7B8521657EE2A2 /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9075C87150DDE17209A9291 /* Question.swift */; };
 		3F5268E746637803F741F43E /* QuestionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36E3C278B50EA0E2FDBA03C /* QuestionsApp.swift */; };
 		6C4871ADCF1002106AB439A1 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066FDEA3BC6504E6885A8EDB /* RootView.swift */; };
+		7EE418F3FA03A18A9ADFA246 /* BaseURLResolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C1D25AFF66D1DCF6010EBA /* BaseURLResolutionTests.swift */; };
 		A17E46E6068AC4039F1B5D49 /* ConnectionProbeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E55477751F3AA4CC8FA7960 /* ConnectionProbeTests.swift */; };
 		A292FBBDE10C61A06916A4EA /* ConnectionProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E219330D59CDFF299DFE64 /* ConnectionProbe.swift */; };
 		A30688EAE922649DE3C6D57B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC0719A4087B77850EAF743 /* SettingsView.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		01BFC2F577D5568C2556A56F /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
 		066FDEA3BC6504E6885A8EDB /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		32C1D25AFF66D1DCF6010EBA /* BaseURLResolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURLResolutionTests.swift; sourceTree = "<group>"; };
 		3E55477751F3AA4CC8FA7960 /* ConnectionProbeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionProbeTests.swift; sourceTree = "<group>"; };
 		4F18292A6F1CC2DF515B0EDE /* AnswerDraftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswerDraftTests.swift; sourceTree = "<group>"; };
 		6EB7D91EB44A87F4C420A50B /* QuestionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionListView.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				4F18292A6F1CC2DF515B0EDE /* AnswerDraftTests.swift */,
+				32C1D25AFF66D1DCF6010EBA /* BaseURLResolutionTests.swift */,
 				3E55477751F3AA4CC8FA7960 /* ConnectionProbeTests.swift */,
 				84DAD0E42C5E073CC41EA760 /* LiveQuestionsAPITests.swift */,
 				BFE99E185D4A2B63BBCF06FE /* QuestionDecodingTests.swift */,
@@ -216,6 +219,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB5034879626523E10D8A691 /* AnswerDraftTests.swift in Sources */,
+				7EE418F3FA03A18A9ADFA246 /* BaseURLResolutionTests.swift in Sources */,
 				A17E46E6068AC4039F1B5D49 /* ConnectionProbeTests.swift in Sources */,
 				D00037C90D5319BC5C41DD5C /* LiveQuestionsAPITests.swift in Sources */,
 				1E9E177F99134C94D77D2D71 /* QuestionDecodingTests.swift in Sources */,
