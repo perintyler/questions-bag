@@ -20,8 +20,8 @@ port of the macOS model would have broken on records that exist right now.
 ## End-to-end, verified against the running service
 
 ```
-questions.barry.lan/health  -> 200   (phone can reach it, over Caddy)
-questions.barry.lan/config  -> 403   (the secret is NOT exposed)
+tail5cb2f2.ts.net:8446/health -> 200   (phone can reach it, over the sidecar)
+tail5cb2f2.ts.net:8446/config -> 403   (the secret is NOT exposed)
 127.0.0.1:3869/config       -> 200   (the web page still works)
 answer answered_by:"ios"    -> 200, state=answered, answered_by=ios
 second answer               -> 409, the FIRST answer stands

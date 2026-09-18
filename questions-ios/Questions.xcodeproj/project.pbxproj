@@ -12,6 +12,8 @@
 		3AA985A69A7B8521657EE2A2 /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9075C87150DDE17209A9291 /* Question.swift */; };
 		3F5268E746637803F741F43E /* QuestionsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36E3C278B50EA0E2FDBA03C /* QuestionsApp.swift */; };
 		6C4871ADCF1002106AB439A1 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066FDEA3BC6504E6885A8EDB /* RootView.swift */; };
+		A17E46E6068AC4039F1B5D49 /* ConnectionProbeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E55477751F3AA4CC8FA7960 /* ConnectionProbeTests.swift */; };
+		A292FBBDE10C61A06916A4EA /* ConnectionProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E219330D59CDFF299DFE64 /* ConnectionProbe.swift */; };
 		A30688EAE922649DE3C6D57B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC0719A4087B77850EAF743 /* SettingsView.swift */; };
 		AA7C1BFD190D326AF188FBE8 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80FA20CBBF3AE8ECB023294 /* Theme.swift */; };
 		BB5692A62396EDB430F6D483 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1243F54BC5D125E13C4D6 /* ServerConfig.swift */; };
@@ -35,6 +37,7 @@
 /* Begin PBXFileReference section */
 		01BFC2F577D5568C2556A56F /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
 		066FDEA3BC6504E6885A8EDB /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		3E55477751F3AA4CC8FA7960 /* ConnectionProbeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionProbeTests.swift; sourceTree = "<group>"; };
 		4F18292A6F1CC2DF515B0EDE /* AnswerDraftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswerDraftTests.swift; sourceTree = "<group>"; };
 		6EB7D91EB44A87F4C420A50B /* QuestionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionListView.swift; sourceTree = "<group>"; };
 		84DAD0E42C5E073CC41EA760 /* LiveQuestionsAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveQuestionsAPITests.swift; sourceTree = "<group>"; };
@@ -45,6 +48,7 @@
 		B36E3C278B50EA0E2FDBA03C /* QuestionsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionsApp.swift; sourceTree = "<group>"; };
 		BFE99E185D4A2B63BBCF06FE /* QuestionDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionDecodingTests.swift; sourceTree = "<group>"; };
 		C4140982232FC8FE8E796FCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C6E219330D59CDFF299DFE64 /* ConnectionProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionProbe.swift; sourceTree = "<group>"; };
 		C959A7990E2E1EB314A9E472 /* QuestionsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionsClient.swift; sourceTree = "<group>"; };
 		D9075C87150DDE17209A9291 /* Question.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Question.swift; sourceTree = "<group>"; };
 		EA18E02E5BFB9B70ABF80908 /* Questions.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Questions.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -57,6 +61,7 @@
 			children = (
 				01BFC2F577D5568C2556A56F /* AppStore.swift */,
 				AE24CD1980385139D123CB67 /* Assets.xcassets */,
+				C6E219330D59CDFF299DFE64 /* ConnectionProbe.swift */,
 				C4140982232FC8FE8E796FCF /* Info.plist */,
 				D9075C87150DDE17209A9291 /* Question.swift */,
 				B36E3C278B50EA0E2FDBA03C /* QuestionsApp.swift */,
@@ -82,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				4F18292A6F1CC2DF515B0EDE /* AnswerDraftTests.swift */,
+				3E55477751F3AA4CC8FA7960 /* ConnectionProbeTests.swift */,
 				84DAD0E42C5E073CC41EA760 /* LiveQuestionsAPITests.swift */,
 				BFE99E185D4A2B63BBCF06FE /* QuestionDecodingTests.swift */,
 			);
@@ -193,6 +199,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5C7AD61F299E499DF8EAFA9 /* AppStore.swift in Sources */,
+				A292FBBDE10C61A06916A4EA /* ConnectionProbe.swift in Sources */,
 				3AA985A69A7B8521657EE2A2 /* Question.swift in Sources */,
 				F1213664ED42C3114F29322D /* QuestionListView.swift in Sources */,
 				3F5268E746637803F741F43E /* QuestionsApp.swift in Sources */,
@@ -209,6 +216,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB5034879626523E10D8A691 /* AnswerDraftTests.swift in Sources */,
+				A17E46E6068AC4039F1B5D49 /* ConnectionProbeTests.swift in Sources */,
 				D00037C90D5319BC5C41DD5C /* LiveQuestionsAPITests.swift in Sources */,
 				1E9E177F99134C94D77D2D71 /* QuestionDecodingTests.swift in Sources */,
 			);

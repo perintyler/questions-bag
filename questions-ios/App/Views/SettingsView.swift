@@ -4,37 +4,30 @@ struct SettingsView: View {
     /// Held as a constant: inlining this as a concatenated literal made the
     /// type-checker give up on the whole `Form` body.
     private static let serverFooter = """
-    The Mac's Tailscale address. It CHANGES — find the current one with \
-    `tailscale ip -4`. The host header routes the request through Caddy; the \
-    raw service port is not reachable from a phone.
+    On a phone the app reaches the Mac over the tailnet at a stable DNS name, \
+    which serves a real certificate and proxies straight to the questions \
+    service. There is no address to keep up to date.
 
-    Unlike the events feed, nothing injects a secret on this path — the \
-    questions service checks every route itself, so the secret is required \
-    on a device.
+    Nothing injects a secret on this path — the questions service checks every \
+    route itself, so the secret is required on a device.
     """
 
     @EnvironmentObject private var store: AppStore
     @Environment(\.dismiss) private var dismiss
 
     @State private var baseURL: String = ""
-    @State private var hostHeader: String = ""
     @State private var secret: String = ""
-    @State private var probeResult: String?
-    @State private var probeOK = false
+    @State private var outcome: ProbeOutcome?
     @State private var isProbing = false
 
     var body: some View {
         Form {
             Section {
-                TextField("http://100.x.x.x", text: $baseURL)
+                TextField(ServerConfig.defaultDeviceURL, text: $baseURL)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("serverURLField")
-                TextField("Host header (e.g. barry.lan)", text: $hostHeader)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .accessibilityIdentifier("hostHeaderField")
                 SecureField("BARRY_SECRET (required)", text: $secret)
                     .accessibilityIdentifier("secretField")
             } header: {
@@ -55,14 +48,22 @@ struct SettingsView: View {
                         }
                     }
                 }
+                .disabled(isProbing)
                 .accessibilityIdentifier("testConnectionButton")
 
-                if let probeResult {
-                    Label(probeResult, systemImage: probeOK ? "checkmark.circle" : "xmark.circle")
-                        .foregroundStyle(probeOK ? .green : .red)
-                        .font(.footnote)
-                        .accessibilityIdentifier("probeResult")
+                if let outcome {
+                    Label {
+                        Text(outcome.message)
+                    } icon: {
+                        Image(systemName: icon(for: outcome))
+                    }
+                    .foregroundStyle(tint(for: outcome))
+                    .font(.footnote)
+                    .accessibilityIdentifier("probeResult")
                 }
+            } footer: {
+                Text("Makes a real request. It tells apart a server that is not "
+                     + "reachable from one that is reachable but refused the secret.")
             }
         }
         .navigationTitle("Settings")
@@ -70,38 +71,33 @@ struct SettingsView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Done") {
-                    store.updateConfig(
-                        ServerConfig(baseURL: baseURL, hostHeader: hostHeader, secret: secret)
-                    )
+                    store.updateConfig(ServerConfig(baseURL: baseURL, secret: secret))
                     dismiss()
                 }
             }
         }
         .onAppear {
             baseURL = store.config.baseURL
-            hostHeader = store.config.hostHeader
             secret = store.config.secret
         }
+    }
+
+    /// Three states, not two: a refused credential proved the network path
+    /// works, so it must not wear the same red X as a host that never answered.
+    private func icon(for outcome: ProbeOutcome) -> String {
+        if outcome.isFullyWorking { return "checkmark.circle" }
+        return outcome.isReachable ? "exclamationmark.triangle" : "xmark.circle"
+    }
+
+    private func tint(for outcome: ProbeOutcome) -> Color {
+        if outcome.isFullyWorking { return .green }
+        return outcome.isReachable ? .orange : .red
     }
 
     private func probe() async {
         isProbing = true
         defer { isProbing = false }
-        let candidate = ServerConfig(baseURL: baseURL, hostHeader: hostHeader, secret: secret)
-        do {
-            // /health needs no auth, so it separates "server down" from
-            // "wrong secret" — then one authenticated call checks the secret.
-            guard try await QuestionsClient(config: candidate).health() else {
-                probeOK = false
-                probeResult = "Reached the server, but it reports unhealthy."
-                return
-            }
-            _ = try await QuestionsClient(config: candidate).questions()
-            probeOK = true
-            probeResult = "Connected."
-        } catch {
-            probeOK = false
-            probeResult = error.localizedDescription
-        }
+        let candidate = ServerConfig(baseURL: baseURL, secret: secret)
+        outcome = await ConnectionProbe(config: candidate).run()
     }
 }

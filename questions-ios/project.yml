@@ -23,11 +23,14 @@ targets:
         CFBundleDisplayName: Questions
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
-        # Plain HTTP over a tailnet: the service binds loopback and is reached
-        # through Caddy, which serves questions.barry.lan with an internal CA
-        # the phone does not trust.
+        # The device path is real HTTPS with a real Let's Encrypt certificate,
+        # so no ATS exception is needed for it. The one remaining plain-HTTP
+        # caller is the SIMULATOR, which talks to the service on 127.0.0.1:3869 —
+        # `NSAllowsLocalNetworking` permits exactly that and nothing routable,
+        # so a mistyped http:// tailnet URL now fails loudly instead of
+        # silently downgrading.
         NSAppTransportSecurity:
-          NSAllowsArbitraryLoads: true
+          NSAllowsLocalNetworking: true
         ITSAppUsesNonExemptEncryption: false
     settings:
       base:

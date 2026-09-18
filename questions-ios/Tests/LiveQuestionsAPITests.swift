@@ -27,7 +27,7 @@ final class LiveQuestionsAPITests: XCTestCase {
         }
         secret = value
         client = QuestionsClient(config: ServerConfig(
-            baseURL: "http://127.0.0.1:3869", hostHeader: "", secret: secret
+            baseURL: "http://127.0.0.1:3869", secret: secret
         ))
     }
 
@@ -67,7 +67,7 @@ final class LiveQuestionsAPITests: XCTestCase {
 
     func testHealthNeedsNoSecret() async throws {
         let unauthenticated = QuestionsClient(config: ServerConfig(
-            baseURL: "http://127.0.0.1:3869", hostHeader: "", secret: ""
+            baseURL: "http://127.0.0.1:3869", secret: ""
         ))
         let healthy = try await unauthenticated.health()
         XCTAssertTrue(healthy)
@@ -77,7 +77,7 @@ final class LiveQuestionsAPITests: XCTestCase {
     /// decorative and nothing would notice.
     func testListRequiresTheSecret() async throws {
         let unauthenticated = QuestionsClient(config: ServerConfig(
-            baseURL: "http://127.0.0.1:3869", hostHeader: "", secret: ""
+            baseURL: "http://127.0.0.1:3869", secret: ""
         ))
         do {
             _ = try await unauthenticated.questions()

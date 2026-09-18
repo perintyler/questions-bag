@@ -17,14 +17,23 @@ barry ios build questions --device
 
 ## Reaching the Mac
 
-| | Base URL | Host header | Secret |
-|---|---|---|---|
-| Simulator | `http://127.0.0.1:3869` | — | not needed from loopback |
-| Device | `http://<tailscale-ip>` | `questions.barry.lan` | **required** |
+| | Base URL | Secret |
+|---|---|---|
+| Simulator | `http://127.0.0.1:3869` | **required** — the service checks every route |
+| Device | `https://barry-mac.tail5cb2f2.ts.net:8446` | **required** |
 
-The service binds `127.0.0.1`; the bag declares `host: questions.barry.lan`, so
-Caddy terminates on the tailnet and proxies to it. A raw service port is not
-reachable from a phone.
+The service binds `127.0.0.1`. A userspace `tailscaled` sidecar terminates TLS
+on the tailnet and proxies to it, so a raw service port is still not reachable
+from a phone.
+
+The device address is a stable tailnet DNS name on purpose. It used to be a
+hardcoded Tailscale IP plus a `Host: questions.barry.lan` header selecting a
+Caddy site block, with a note to re-check the IP using `tailscale ip -4` — and
+it went stale anyway when the node it named went offline, leaving the device
+path dead. A name that Tailscale resolves removes the maintenance instead of
+rescheduling it. The endpoint proxies to this service alone, so there is no
+host header to set. The certificate is a real Let's Encrypt one, so there is
+nothing to trust manually.
 
 **Unlike the events feed, nothing injects a secret on this path.** The questions
 service authenticates every route itself, so the secret is required on a device

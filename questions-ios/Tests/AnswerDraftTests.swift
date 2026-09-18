@@ -10,7 +10,7 @@ import XCTest
 final class AnswerDraftTests: XCTestCase {
 
     private func store() -> AppStore {
-        AppStore(config: ServerConfig(baseURL: "http://127.0.0.1:1", hostHeader: "", secret: ""))
+        AppStore(config: ServerConfig(baseURL: "http://127.0.0.1:1", secret: ""))
     }
 
     private func record(
