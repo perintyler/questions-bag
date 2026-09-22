@@ -19,7 +19,7 @@ let package = Package(
         // package's identity from its directory name, and a second package
         // called `app` collides with the sessions one — the dependency
         // resolves to itself and the product is reported missing.
-        .package(path: "../../../barry/bags/sessions/sessions-macos/app")
+        .package(path: "../../sessions-ui/sessions-macos")
     ],
     targets: [
         // Pure, UI-capable feature logic — the model, client and state. Split
@@ -28,7 +28,7 @@ let package = Package(
         .target(
             name: "QuestionsFeature",
             dependencies: [
-                .product(name: "Components", package: "app")
+                .product(name: "Components", package: "sessions-macos")
             ],
             path: "Features/Questions",
             swiftSettings: [.swiftLanguageMode(.v5)]

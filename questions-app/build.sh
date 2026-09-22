@@ -21,7 +21,7 @@ cp Resources/Info.plist "$CONTENTS/Info.plist"
 # AppFont, which probes Contents/Resources/Fonts first and falls back to the
 # system stack. Without these the previews lose their monospace alignment.
 mkdir -p "$CONTENTS/Resources/Fonts"
-cp ../../../barry/bags/sessions/sessions-macos/app/Resources/Fonts/*.ttf "$CONTENTS/Resources/Fonts/"
+cp ../../sessions-ui/sessions-macos/Resources/Fonts/*.ttf "$CONTENTS/Resources/Fonts/"
 
 # Bind the ad-hoc signature to the assembled bundle. `swift build` signs the
 # bare binary and seals resources, but the resources are copied in above —
