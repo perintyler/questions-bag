@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@barry-rocks/logger": "link:../../barry/packages/logger",
-    "@barry-rocks/tools": "link:../../barry/packages/tools",
+    "@barry-rocks/sdk-bags": "link:../../barry/sdk/bags",
     "better-sqlite3": "12.10.0",
     "express": "4.22.1",
     "zod": "3.25.76"

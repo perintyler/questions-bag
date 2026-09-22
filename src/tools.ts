@@ -12,7 +12,7 @@
  */
 
 import { z } from "zod";
-import { defineTool, type ToolContext } from "@barry-rocks/tools";
+import { defineTool, type ToolContext } from "@barry-rocks/sdk-bags";
 import { randomUUID } from "node:crypto";
 import {
   createQuestion,

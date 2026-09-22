@@ -45,7 +45,7 @@ barry pack questions
 ```
 
 **The clone has to sit beside a Barry checkout.** `package.json` resolves
-`@barry-rocks/tools` and `@barry-rocks/logger` through `link:../../barry/...`,
+`@barry-rocks/sdk-bags` and `@barry-rocks/logger` through `link:../../barry/...`,
 the same convention every bag in the aggregator uses — so `~/repos/bags/questions`
 alongside `~/repos/barry` works, and an arbitrary path fails to typecheck. The
 tests pass either way, which makes the wrong layout easy to miss: run
