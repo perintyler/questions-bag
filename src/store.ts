@@ -33,13 +33,51 @@ interface Row {
   created_at: string;
 }
 
+/**
+ * Backfill an asked question read from storage against the current shape.
+ *
+ * `payload` is stored once and read verbatim (see initSchema's comment on
+ * the column) — there is no migration path for it, so a row written before
+ * `kind` and `multiSelect` were added to AskedQuestion still has neither.
+ * Both are non-optional in the type every client decodes against (Swift's
+ * `Question.swift`, the web page, this file's own callers), so an
+ * un-backfilled row fails JSON decoding on every one of them at once — this
+ * is what actually broke the Mac app: not a network problem, a row from
+ * 2026-09-16 missing fields the current schema requires.
+ *
+ * `kind` defaults to "choice": every affected row on this store has
+ * `options`, and "choice" is what such a row meant before `kind` existed.
+ * `multiSelect` defaults to `false`, the value every caller passed before
+ * the field existed.
+ *
+ * `id` is synthesized from the parent record id and array index rather than
+ * left absent, matching what `createQuestion` already guarantees for new
+ * rows. It only needs to be *stable across repeated reads of the same row*
+ * (SwiftUI's Identifiable, React's key), not globally unique or persisted —
+ * a fresh but consistent id each time `hydrate` runs satisfies that. Safe to
+ * synthesize here because the only rows ever seen missing it are already
+ * `expired` with `answers: null`; nothing references an asked-question id
+ * from an unanswered, unexpired question or from stored answers.
+ */
+function backfillAskedQuestion(raw: unknown, recordId: string, index: number): AskedQuestion {
+  const asked = raw as Partial<AskedQuestion>;
+  return {
+    ...asked,
+    id: asked.id ?? `${recordId}-${index}`,
+    question: asked.question ?? "",
+    kind: asked.kind ?? "choice",
+    multiSelect: asked.multiSelect ?? false,
+  } as AskedQuestion;
+}
+
 function hydrate(row: Row): QuestionRecord {
+  const rawQuestions = JSON.parse(row.payload) as unknown[];
   return {
     id: row.id,
     session_id: row.session_id,
     requester: row.requester,
     context: row.context,
-    questions: JSON.parse(row.payload) as AskedQuestion[],
+    questions: rawQuestions.map((q, i) => backfillAskedQuestion(q, row.id, i)),
     answers: row.answer ? (JSON.parse(row.answer) as QuestionAnswer[]) : null,
     state: row.state,
     answered_by: row.answered_by,

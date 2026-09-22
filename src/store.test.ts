@@ -107,6 +107,61 @@ describe("answering", () => {
   });
 });
 
+describe("hydrating legacy rows", () => {
+  // payload is stored once and read verbatim (see initSchema's comment on the
+  // column) -- there is no migration for it. A row written before `kind` and
+  // `multiSelect` existed on AskedQuestion is still sitting in real stores
+  // with neither, and both are non-optional in the type every client decodes
+  // against. This reproduces exactly that: a row created by writing the JSON
+  // directly, the way createQuestion could NOT produce it (it always writes
+  // a complete AskedQuestion), because that mismatch is the actual bug --
+  // not a network problem, a legacy row failing to decode on every client at
+  // once.
+  function insertLegacyRow(payload: unknown, overrides: Partial<{ state: string }> = {}) {
+    const db = getDb();
+    const id = "legacy-" + Math.random().toString(36).slice(2);
+    db.prepare(
+      `INSERT INTO questions (id, requester, payload, state, expires_at)
+       VALUES (?, 'legacy-test', ?, ?, datetime('now', '+1 hour'))`,
+    ).run(id, JSON.stringify(payload), overrides.state ?? "pending");
+    return id;
+  }
+
+  it("defaults a missing kind to choice", () => {
+    const id = insertLegacyRow([{ id: "q1", question: "old row", options: [{ label: "a" }] }]);
+    expect(getQuestion(id)?.questions[0].kind).toBe("choice");
+  });
+
+  it("defaults a missing multiSelect to false", () => {
+    const id = insertLegacyRow([{ id: "q1", question: "old row", kind: "choice" }]);
+    expect(getQuestion(id)?.questions[0].multiSelect).toBe(false);
+  });
+
+  // The two real rows this was found on (ios-surface-check probes) had
+  // neither id, kind, nor multiSelect, and were already expired with no
+  // answers -- so a synthesized id needs only to be stable across repeated
+  // reads of the same row, not globally unique or persisted.
+  it("synthesizes a stable id when one is missing entirely", () => {
+    const id = insertLegacyRow([{ question: "probe", options: [{ label: "a" }] }]);
+    const first = getQuestion(id)?.questions[0].id;
+    const second = getQuestion(id)?.questions[0].id;
+    expect(first).toBeTruthy();
+    expect(first).toBe(second);
+  });
+
+  it("leaves a fully-shaped row untouched", () => {
+    const id = insertLegacyRow(CHOICE);
+    expect(getQuestion(id)?.questions).toEqual(CHOICE);
+  });
+
+  it("backfills through listQuestions too, not just getQuestion", () => {
+    insertLegacyRow([{ id: "q1", question: "old row" }]);
+    const [listed] = listQuestions({ state: "pending" });
+    expect(listed.questions[0].kind).toBe("choice");
+    expect(listed.questions[0].multiSelect).toBe(false);
+  });
+});
+
 describe("dismissing", () => {
   it("is not the same as expiring", () => {
     // Someone was reached and said "not answering". That proves delivery
