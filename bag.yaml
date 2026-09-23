@@ -17,6 +17,10 @@ services:
     args: ["exec", "tsx", "server/src/index.ts"]
     working-directory: .
     port: 3869
+    # Reachable from the user's own devices over their tailnet. Intent only:
+    # the serve port, hostname and tailnet live in ~/.barry/tailnet.yaml,
+    # because they describe this installation rather than this bag.
+    tailnet: true
     health: /health
     # Reachable from a phone. The listener stays bound to loopback; Caddy
     # terminates on the tailnet and proxies here, which is how every other bag
