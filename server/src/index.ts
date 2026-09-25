@@ -13,7 +13,7 @@
 import express from "express";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { createLogger } from "@barry-rocks/logger";
+import { createLogger } from "@barry-rocks/logs-bag";
 import { sweeperHealth } from "./health.js";
 import { isDirectLoopback } from "./loopback.js";
 import {
