@@ -108,10 +108,11 @@ told it expired and acted on that.
 directory. That pattern resolves SQL through `import.meta.url`, which breaks the
 moment esbuild bundles this bag into `~/Library/Caches/Barry/bags`.
 
-**Every client authenticates, including the page this service serves.** The web
-UI collects the secret from the `/config` route (direct callers only) instead of the
-service exempting same-origin requests. One code path means a broken guard shows
-up as a 401 rather than as silently open access.
+**Every client authenticates, including the page this service serves.** The apps
+send the instance secret; the web page signs in once with it and holds the
+HttpOnly session cookie that sign-in sets (`@barry-rocks/sdk/auth/browser`).
+Nothing hands the secret out, and nothing is exempt for being same-origin, so a
+broken guard shows up as a 401 rather than as silently open access.
 
 ## Layout
 

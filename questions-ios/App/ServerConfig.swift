@@ -19,9 +19,7 @@ import BarryLocal
 /// The secret is REQUIRED on this path: the questions service authenticates
 /// every route itself against BARRY_SECRET, and nothing upstream fills it in.
 ///
-/// The app deliberately does NOT use the service's `/config` route to fetch it.
-/// That route answers only a direct caller on this Mac (it refuses one that came
-/// through a hosting provider), because a client that bootstraps its credential from an
+/// Nothing serves the secret: a client that bootstraps its credential from an
 /// unauthenticated endpoint does not really have a credential.
 struct ServerConfig: Equatable {
     var baseURL: String

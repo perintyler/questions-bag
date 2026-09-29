@@ -37,12 +37,9 @@ nothing to trust manually.
 
 **Unlike the events feed, nothing injects a secret on this path.** The questions
 service authenticates every route itself, so the secret is required on a device
-and is entered once into the keychain. The app deliberately does *not* use the
-service's `/config` route to fetch it: a client that bootstraps its credential
-from an unauthenticated endpoint does not really have one. (That route also
-answers only a direct caller on this Mac, and refuses one that came through a
-hosting provider — otherwise publishing the service would have published
-`BARRY_SECRET` along with it.)
+and is entered once into the keychain. Nothing serves the secret: a client
+that bootstraps its credential from an unauthenticated endpoint does not really
+have one.
 
 > The Tailscale address **changes** — this Mac moved twice in a day. The shipped
 > default is a starting point; Settings overrides and persists it. Find the

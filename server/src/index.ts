@@ -16,7 +16,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createLogger } from "@barry-rocks/logs-bag";
 import { sweeperHealth } from "./health.js";
-import { isDirectLoopback } from "./loopback.js";
+import { handleSignIn, isAuthorized, SIGN_IN_PATH } from "@barry-rocks/sdk/auth/browser";
 import {
   createQuestion,
   getQuestion,
@@ -57,38 +57,28 @@ app.use((req, _res, next) => {
   next();
 });
 
+/**
+ * Every client carries the instance secret: the apps as a bearer token, the
+ * web page as the session cookie its sign-in exchanged the secret for. Nothing
+ * hands the secret out; the page used to fetch it from an unauthenticated
+ * `/config` route, which gave it to any process or page that could reach it.
+ */
 function authorize(req: express.Request, res: express.Response): boolean {
   if (!SECRET) {
     res.status(500).json({ error: "the questions service has no BARRY_SECRET, so it refuses every request" });
     return false;
   }
-  const header = req.headers.authorization;
-  const alt = req.headers["x-barry-secret"];
-  if (header === `Bearer ${SECRET}` || alt === SECRET) return true;
-  res.status(401).json({ error: "unauthorized" });
+  if (isAuthorized(req, SECRET)) return true;
+  res.status(401).json({ error: "unauthorized", signIn: SIGN_IN_PATH });
   return false;
 }
 
-/**
- * The secret, for the page this service itself serves.
- *
- * The alternative was exempting the web routes from auth on the grounds that
- * they are same-origin — but then the guard's broken state (no auth at all)
- * and its working state look identical from the browser, and nothing would
- * catch it if the bind address ever widened. Handing the page a credential
- * keeps one code path: every client authenticates, including this one.
- *
- * Served only to a DIRECT loopback caller — see `isDirectLoopback`. The phone
- * app deliberately does not use this route; it carries a secret entered once
- * into the keychain, because a client that bootstraps its credential from an
- * unauthenticated endpoint does not really have one.
- */
-app.get("/config", (req, res) => {
-  if (!isDirectLoopback(req)) {
-    res.status(403).json({ error: "forbidden" });
-    return;
+app.all(SIGN_IN_PATH, async (req, res, next) => {
+  try {
+    if (!(await handleSignIn(req, res, SECRET, "Questions"))) next();
+  } catch (error) {
+    next(error);
   }
-  res.json({ secret: SECRET });
 });
 
 const SURFACES: Surface[] = ["notification", "app", "web", "cli", "ios"];
@@ -232,8 +222,8 @@ app.post("/questions/:id/delivery", (req, res) => {
   res.json({ recorded: true });
 });
 
-// The web page. Unauthenticated on purpose — it is served on loopback only,
-// and the API calls it makes carry the secret from the page's own config.
+// The web page's files hold no data, so they are served without the secret;
+// every API call the page makes carries its signed-in session cookie.
 app.use("/", express.static(join(dirname(fileURLToPath(import.meta.url)), "..", "..", "web")));
 
 const sweeper = setInterval(() => {

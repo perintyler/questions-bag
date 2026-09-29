@@ -118,7 +118,7 @@ Start it, then exercise the lifecycle:
 ```bash
 cd ~/repos/bags/questions && pnpm start &
 sleep 5
-S=$(curl -s http://127.0.0.1:3879/config | python3 -c 'import sys,json; print(json.load(sys.stdin)["secret"])')
+S="$BARRY_SECRET"   # the instance secret; nothing serves it
 
 # create
 ID=$(curl -s -X POST http://127.0.0.1:3879/questions -H "Authorization: Bearer $S" \
