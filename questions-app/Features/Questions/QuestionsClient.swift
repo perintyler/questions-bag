@@ -1,12 +1,14 @@
 import Foundation
+import BarryKit
 
 /// Talks to the questions service.
 ///
 /// The app cannot open the bag's SQLite file, so every read and write goes
-/// through the loopback service. The secret comes from `/config`, which the
-/// service serves only to loopback callers — the same credential the web page
-/// collects, so there is one authentication path rather than a special case
-/// that could rot unnoticed.
+/// through the service, found in the instance's registry (`questions.api`).
+/// The secret is the instance's own, read from its env file, not fetched from
+/// the service: a request is trusted for the secret it carries, and a client
+/// that bootstraps its credential from an unauthenticated endpoint does not
+/// really have one.
 public actor QuestionsClient {
     public struct Failure: LocalizedError {
         public let message: String
@@ -15,29 +17,23 @@ public actor QuestionsClient {
 
     private let baseURL: URL
     private let session: URLSession
-    private var secret: String?
+    private let secret: String?
 
-    public init(port: Int = 3869, session: URLSession = .shared) {
-        let configured = ProcessInfo.processInfo.environment["BARRY_QUESTIONS_PORT"]
-        let resolved = configured.flatMap(Int.init) ?? port
-        self.baseURL = URL(string: "http://127.0.0.1:\(resolved)")!
+    public init(
+        baseURL: URL? = nil,
+        secret: String? = BarryInstance.secret,
+        session: URLSession = .shared
+    ) {
+        // Unknown means an address nothing listens on, never a guessed port.
+        self.baseURL = baseURL ?? BarryInstance.serviceURL("questions.api") ?? URL(string: "http://127.0.0.1:1")!
+        self.secret = secret
         self.session = session
-    }
-
-    private func credential() async throws -> String {
-        if let secret { return secret }
-        let (data, _) = try await session.data(from: baseURL.appending(path: "config"))
-        let config = try JSONDecoder().decode([String: String].self, from: data)
-        let value = config["secret"] ?? ""
-        secret = value
-        return value
     }
 
     private func request(_ path: String, method: String = "GET", body: Data? = nil) async throws -> Data {
         var request = URLRequest(url: baseURL.appending(path: path))
         request.httpMethod = method
-        let secret = try await credential()
-        if !secret.isEmpty {
+        if let secret, !secret.isEmpty {
             request.setValue("Bearer \(secret)", forHTTPHeaderField: "Authorization")
         }
         if let body {
