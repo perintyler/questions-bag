@@ -23,7 +23,7 @@ export QA_DB=/tmp/questions-qa.db
 rm -f "$QA_DB" "$QA_DB"-wal "$QA_DB"-shm
 export BARRY_QUESTIONS_DB="$QA_DB"
 # A port nothing else uses, so QA never collides with the deployed service.
-export BARRY_QUESTIONS_PORT=3879
+export PORT=3879
 ```
 
 ## Test steps
@@ -118,7 +118,7 @@ Start it, then exercise the lifecycle:
 ```bash
 cd ~/repos/bags/questions && pnpm start &
 sleep 5
-S=$(curl -s http://127.0.0.1:3879/config | python3 -c 'import sys,json; print(json.load(sys.stdin)["secret"])')
+S="$BARRY_SECRET"   # the instance secret; nothing serves it
 
 # create
 ID=$(curl -s -X POST http://127.0.0.1:3879/questions -H "Authorization: Bearer $S" \

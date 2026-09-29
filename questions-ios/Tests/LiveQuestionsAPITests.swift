@@ -13,17 +13,11 @@ final class LiveQuestionsAPITests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
-        // The secret comes from the service's own loopback-only /config, which
-        // is exactly how the web page gets it. The APP does not do this — it
-        // uses a keychain secret — but a test running on this machine is a
-        // legitimate direct loopback caller.
-        guard let url = URL(string: "http://127.0.0.1:3869/config"),
-              let (data, response) = try? await URLSession.shared.data(from: url),
-              (response as? HTTPURLResponse)?.statusCode == 200,
-              let config = try? JSONDecoder().decode([String: String].self, from: data),
-              let value = config["secret"]
-        else {
-            throw XCTSkip("questions service not reachable on 127.0.0.1:3869")
+        // The instance secret, from the test's environment: nothing serves it.
+        // Run with `TEST_RUNNER_BARRY_SECRET=... xcodebuild test ...`, which
+        // xcodebuild passes to the test process as BARRY_SECRET.
+        guard let value = ProcessInfo.processInfo.environment["BARRY_SECRET"], !value.isEmpty else {
+            throw XCTSkip("set TEST_RUNNER_BARRY_SECRET to run the live tests")
         }
         secret = value
         client = QuestionsClient(config: ServerConfig(

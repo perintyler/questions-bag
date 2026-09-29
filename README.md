@@ -108,20 +108,21 @@ told it expired and acted on that.
 directory. That pattern resolves SQL through `import.meta.url`, which breaks the
 moment esbuild bundles this bag into `~/Library/Caches/Barry/bags`.
 
-**Every client authenticates, including the page this service serves.** The web
-UI collects the secret from the loopback-only `/config` route instead of the
-service exempting same-origin requests. One code path means a broken guard shows
-up as a 401 rather than as silently open access.
+**Every client authenticates, including the page this service serves.** The apps
+send the instance secret; the web page signs in once with it and holds the
+HttpOnly session cookie that sign-in sets (`@barry-rocks/sdk/auth/browser`).
+Nothing hands the secret out, and nothing is exempt for being same-origin, so a
+broken guard shows up as a 401 rather than as silently open access.
 
 ## Layout
 
 | Path | What it is |
 |---|---|
 | `src/store.ts` | The state machine and its guards |
-| `src/db.ts` | Schema (`~/.barry/questions.db`, `BARRY_QUESTIONS_DB`) |
+| `src/db.ts` | Schema (`questions.db` in the bag's data directory; `BARRY_QUESTIONS_DB` overrides) |
 | `src/types.ts` | The question shape, shared by every surface |
 | `src/tools.ts` | `ask`, `list`, `status` |
-| `server/src/index.ts` | HTTP service on 3869, the expiry sweeper, and the web page |
+| `server/src/index.ts` | HTTP service on the port `barry up` assigns, the expiry sweeper, and the web page |
 | `server/src/health.ts` | Whether deadlines are actually being enforced |
 | `web/` | The web UI |
 | `questions-app/` | The native macOS app (SwiftUI) |

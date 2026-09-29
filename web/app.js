@@ -22,28 +22,22 @@ function key(recordId, questionId) {
 }
 
 /**
- * The service authenticates every client, this page included — so the page
- * collects its credential from the loopback-only /config route rather than
- * the service carving out an unauthenticated path for same-origin requests.
- * One code path means a broken guard shows up as a 401 here instead of
- * silently letting anything through.
+ * The service authenticates every client, this page included: the browser
+ * carries the session cookie the sign-in page set (HttpOnly, so this script
+ * never sees it). A page that is not signed in goes to sign in.
  */
-let secret = null;
-
 async function api(path, options) {
-  if (secret === null) {
-    const config = await fetch("/config").then((r) => r.json());
-    secret = config.secret ?? "";
-  }
-
   const response = await fetch(path, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(secret ? { Authorization: `Bearer ${secret}` } : {}),
       ...(options?.headers ?? {}),
     },
   });
+  if (response.status === 401) {
+    window.location.assign("/sign-in");
+    throw new Error("signing in");
+  }
   if (!response.ok && response.status !== 409) {
     throw new Error(`HTTP ${response.status}`);
   }

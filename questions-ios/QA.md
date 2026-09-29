@@ -12,7 +12,6 @@ was run and confirmed red, then reverted.
 | 2 | a default seeds only once | drop the `seededDefaults` guard | red: "the poll reinstated a default the reader had cleared" |
 | 3 | the model decodes real rows | make `kind` non-optional (the macOS shape) | red against the LIVE store: `keyNotFound("kind")` |
 | 4 | `ios` is an accepted surface | remove `"ios"` from `SURFACES` in the service | live answer returns **400**, not 200 |
-| 5 | `/config` refuses proxied callers | restore the socket-only guard | 3 loopback tests red |
 
 #3 is the one that matters most: it fails against **live data**, proving a direct
 port of the macOS model would have broken on records that exist right now.
@@ -21,8 +20,6 @@ port of the macOS model would have broken on records that exist right now.
 
 ```
 tail5cb2f2.ts.net:8446/health -> 200   (phone can reach it, over the sidecar)
-tail5cb2f2.ts.net:8446/config -> 403   (the secret is NOT exposed)
-127.0.0.1:3869/config       -> 200   (the web page still works)
 answer answered_by:"ios"    -> 200, state=answered, answered_by=ios
 second answer               -> 409, the FIRST answer stands
 deliveries table            -> ios|1  (delivery reported from the app)

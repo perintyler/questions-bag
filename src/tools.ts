@@ -244,11 +244,7 @@ export const status = defineTool({
     "Check that asking a question actually works end to end: the store, the service, and whether any surface is in a position to show one to a human.",
   schema: {},
   handler: async () => {
-    const port = process.env.BARRY_QUESTIONS_PORT;
-    const url = `${bagServiceUrl("questions", "api", {
-      override: port ? `http://127.0.0.1:${port}` : undefined,
-      fallback: "http://127.0.0.1:3869",
-    })}/health`;
+    const url = `${bagServiceUrl("questions", "api")}/health`;
 
     let service: { reachable: boolean; healthy: boolean; detail: string };
     try {

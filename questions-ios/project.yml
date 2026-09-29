@@ -11,6 +11,11 @@ settings:
     # `barry ios build --device` layers signing on as xcodebuild overrides.
     CODE_SIGNING_ALLOWED: "NO"
     CODE_SIGN_IDENTITY: ""
+# BarryLocal: the simulator finds its service in the host Mac's instance.
+packages:
+  BarryKit:
+    path: ../../BarryKit
+
 targets:
   Questions:
     type: application
@@ -38,6 +43,9 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         TARGETED_DEVICE_FAMILY: "1"
         PRODUCT_BUNDLE_IDENTIFIER: ${BARRY_BUNDLE_PREFIX}.questions.app
+    dependencies:
+      - package: BarryKit
+        product: BarryLocal
   QuestionsTests:
     type: bundle.unit-test
     platform: iOS
