@@ -109,7 +109,7 @@ directory. That pattern resolves SQL through `import.meta.url`, which breaks the
 moment esbuild bundles this bag into `~/Library/Caches/Barry/bags`.
 
 **Every client authenticates, including the page this service serves.** The web
-UI collects the secret from the loopback-only `/config` route instead of the
+UI collects the secret from the `/config` route (direct callers only) instead of the
 service exempting same-origin requests. One code path means a broken guard shows
 up as a 401 rather than as silently open access.
 

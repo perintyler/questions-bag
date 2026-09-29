@@ -23,7 +23,7 @@ function key(recordId, questionId) {
 
 /**
  * The service authenticates every client, this page included — so the page
- * collects its credential from the loopback-only /config route rather than
+ * collects its credential from the /config route (direct callers only) rather than
  * the service carving out an unauthenticated path for same-origin requests.
  * One code path means a broken guard shows up as a 401 here instead of
  * silently letting anything through.

@@ -13,7 +13,7 @@ final class LiveQuestionsAPITests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
-        // The secret comes from the service's own loopback-only /config, which
+        // The secret comes from the service's own /config (direct callers only), which
         // is exactly how the web page gets it. The APP does not do this — it
         // uses a keychain secret — but a test running on this machine is a
         // legitimate direct loopback caller.

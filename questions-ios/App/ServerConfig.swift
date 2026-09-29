@@ -20,8 +20,8 @@ import BarryLocal
 /// every route itself against BARRY_SECRET, and nothing upstream fills it in.
 ///
 /// The app deliberately does NOT use the service's `/config` route to fetch it.
-/// That route is loopback-only (and, since this app existed, refuses proxied
-/// callers too), because a client that bootstraps its credential from an
+/// That route answers only a direct caller on this Mac (it refuses one that came
+/// through a hosting provider), because a client that bootstraps its credential from an
 /// unauthenticated endpoint does not really have a credential.
 struct ServerConfig: Equatable {
     var baseURL: String
