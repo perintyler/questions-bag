@@ -20,6 +20,7 @@
 		BB5692A62396EDB430F6D483 /* ServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1243F54BC5D125E13C4D6 /* ServerConfig.swift */; };
 		C2AA2FF2E777E1A2ECD1FA00 /* QuestionsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959A7990E2E1EB314A9E472 /* QuestionsClient.swift */; };
 		D00037C90D5319BC5C41DD5C /* LiveQuestionsAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DAD0E42C5E073CC41EA760 /* LiveQuestionsAPITests.swift */; };
+		D441929AA66C05FD5C58206B /* BarryLocal in Frameworks */ = {isa = PBXBuildFile; productRef = 95FAC886FCB7EC625C19293E /* BarryLocal */; };
 		D5C7AD61F299E499DF8EAFA9 /* AppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BFC2F577D5568C2556A56F /* AppStore.swift */; };
 		F1213664ED42C3114F29322D /* QuestionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7D91EB44A87F4C420A50B /* QuestionListView.swift */; };
 		FB5034879626523E10D8A691 /* AnswerDraftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F18292A6F1CC2DF515B0EDE /* AnswerDraftTests.swift */; };
@@ -48,6 +49,7 @@
 		A80FA20CBBF3AE8ECB023294 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		AE24CD1980385139D123CB67 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B36E3C278B50EA0E2FDBA03C /* QuestionsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionsApp.swift; sourceTree = "<group>"; };
+		BACB42AE2411680EBDCA80B6 /* BarryKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BarryKit; path = ../../BarryKit; sourceTree = SOURCE_ROOT; };
 		BFE99E185D4A2B63BBCF06FE /* QuestionDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionDecodingTests.swift; sourceTree = "<group>"; };
 		C4140982232FC8FE8E796FCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C6E219330D59CDFF299DFE64 /* ConnectionProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionProbe.swift; sourceTree = "<group>"; };
@@ -56,6 +58,17 @@
 		EA18E02E5BFB9B70ABF80908 /* Questions.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Questions.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFC0719A4087B77850EAF743 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8C6EC55BE04CBF9614F7FD3C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D441929AA66C05FD5C58206B /* BarryLocal in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		2B345594BEBE4F1DC494BBAF /* App */ = {
@@ -110,9 +123,18 @@
 			isa = PBXGroup;
 			children = (
 				2B345594BEBE4F1DC494BBAF /* App */,
+				DA00D470ABEA29A070114FB1 /* Packages */,
 				9AE0D166E9047547027FB74C /* Tests */,
 				9E5D6C93292214B21365CD88 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		DA00D470ABEA29A070114FB1 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				BACB42AE2411680EBDCA80B6 /* BarryKit */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -124,6 +146,7 @@
 			buildPhases = (
 				7AD591A576C54CC62F62BA37 /* Sources */,
 				4D1E7C8C9A3B133464616970 /* Resources */,
+				8C6EC55BE04CBF9614F7FD3C /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -131,6 +154,7 @@
 			);
 			name = Questions;
 			packageProductDependencies = (
+				95FAC886FCB7EC625C19293E /* BarryLocal */,
 			);
 			productName = Questions;
 			productReference = EA18E02E5BFB9B70ABF80908 /* Questions.app */;
@@ -174,6 +198,9 @@
 			);
 			mainGroup = C7D73D000F61B4E77C91DEA5;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				00019AA50FDBA1582497A4F2 /* XCLocalSwiftPackageReference "../../BarryKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9E5D6C93292214B21365CD88 /* Products */;
 			projectDirPath = "";
@@ -457,6 +484,20 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		00019AA50FDBA1582497A4F2 /* XCLocalSwiftPackageReference "../../BarryKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../BarryKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		95FAC886FCB7EC625C19293E /* BarryLocal */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BarryLocal;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D5F92C079DA8A54AD6534F61 /* Project object */;
 }

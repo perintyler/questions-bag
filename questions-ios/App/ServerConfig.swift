@@ -1,4 +1,5 @@
 import Foundation
+import BarryLocal
 
 /// Where the app talks to the questions service, and how it authenticates.
 ///
@@ -48,7 +49,9 @@ struct ServerConfig: Equatable {
     static let keychainSecretKey = "rocks.barry.questions.secret"
 
     static let defaultDeviceURL = "https://barry-mac.tail5cb2f2.ts.net:8446"
-    static let simulatorURL = "http://127.0.0.1:3869"
+    /// The service on the host Mac, from its instance registry (the simulator
+    /// shares the Mac's files). Empty when the instance lists none.
+    static var simulatorURL: String { BarryInstance.serviceURL("questions.api")?.absoluteString ?? "" }
 
     /// The one route the service answers without a secret. The probe uses it
     /// to tell "the service is not there" apart from "the secret is wrong".
