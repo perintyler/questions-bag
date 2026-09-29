@@ -118,10 +118,10 @@ up as a 401 rather than as silently open access.
 | Path | What it is |
 |---|---|
 | `src/store.ts` | The state machine and its guards |
-| `src/db.ts` | Schema (`~/.barry/questions.db`, `BARRY_QUESTIONS_DB`) |
+| `src/db.ts` | Schema (`questions.db` in the bag's data directory; `BARRY_QUESTIONS_DB` overrides) |
 | `src/types.ts` | The question shape, shared by every surface |
 | `src/tools.ts` | `ask`, `list`, `status` |
-| `server/src/index.ts` | HTTP service on 3869, the expiry sweeper, and the web page |
+| `server/src/index.ts` | HTTP service on the port `barry up` assigns, the expiry sweeper, and the web page |
 | `server/src/health.ts` | Whether deadlines are actually being enforced |
 | `web/` | The web UI |
 | `questions-app/` | The native macOS app (SwiftUI) |

@@ -10,6 +10,7 @@
  * is asking.
  */
 
+import { listenOnAssignedPort } from "@barry-rocks/sdk/services/listen";
 import express from "express";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -29,7 +30,6 @@ import type { QuestionState, Surface } from "../../src/types.js";
 
 const log = createLogger("questions");
 
-const PORT = Number(process.env.BARRY_QUESTIONS_PORT ?? 3869);
 const SECRET = process.env.BARRY_SECRET ?? "";
 
 /** How often elapsed questions are closed. */
@@ -58,7 +58,10 @@ app.use((req, _res, next) => {
 });
 
 function authorize(req: express.Request, res: express.Response): boolean {
-  if (!SECRET) return true;
+  if (!SECRET) {
+    res.status(500).json({ error: "the questions service has no BARRY_SECRET, so it refuses every request" });
+    return false;
+  }
   const header = req.headers.authorization;
   const alt = req.headers["x-barry-secret"];
   if (header === `Bearer ${SECRET}` || alt === SECRET) return true;
@@ -249,6 +252,5 @@ sweeper.unref?.();
 sweepExpired();
 lastSweepAt = Date.now();
 
-app.listen(PORT, "127.0.0.1", () => {
-  log.info(`questions service on 127.0.0.1:${PORT}`);
-});
+const listening = await listenOnAssignedPort(app);
+log.info(`questions service on ${JSON.stringify(listening.address())}`);

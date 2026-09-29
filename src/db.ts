@@ -1,7 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import Database from "better-sqlite3";
-import { barryHome } from "@barry-rocks/sdk/services/home";
+import { bagDataDir } from "@barry-rocks/sdk/services/home";
 
 export type QuestionDb = Database.Database;
 
@@ -18,7 +18,7 @@ export const DEFAULT_TTL_MINUTES = 240;
 let _db: QuestionDb | null = null;
 
 function getDbPath(): string {
-  return process.env.BARRY_QUESTIONS_DB ?? join(barryHome(), "questions.db");
+  return process.env.BARRY_QUESTIONS_DB ?? join(bagDataDir("questions"), "questions.db");
 }
 
 /**

@@ -23,7 +23,7 @@ export QA_DB=/tmp/questions-qa.db
 rm -f "$QA_DB" "$QA_DB"-wal "$QA_DB"-shm
 export BARRY_QUESTIONS_DB="$QA_DB"
 # A port nothing else uses, so QA never collides with the deployed service.
-export BARRY_QUESTIONS_PORT=3879
+export PORT=3879
 ```
 
 ## Test steps

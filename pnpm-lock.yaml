@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@barry-rocks/logs-bag':
-        specifier: link:../../barry/harness/telemetry/logs
-        version: link:../../barry/harness/telemetry/logs
+        specifier: link:../../barry/builtin/telemetry/logs
+        version: link:../../barry/builtin/telemetry/logs
       '@barry-rocks/sdk':
         specifier: link:../../barry/sdk/lib
         version: link:../../barry/sdk/lib
