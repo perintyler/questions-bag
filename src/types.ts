@@ -89,5 +89,11 @@ export interface Outcome {
   undelivered?: string;
 }
 
-/** Where an answer came from, or where delivery was attempted. */
-export type Surface = "notification" | "app" | "web" | "cli" | "ios";
+/**
+ * Where an answer came from, or where delivery was attempted.
+ *
+ * `supervisor` is the Supervisor bag answering on the user's behalf — from its
+ * app, a notification it pushed, or a standing answer. It is recorded as its
+ * own surface so an audit can tell those apart from this bag's own UIs.
+ */
+export type Surface = "notification" | "app" | "web" | "cli" | "ios" | "supervisor";

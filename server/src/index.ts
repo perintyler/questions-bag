@@ -26,7 +26,8 @@ import {
   sweepExpired,
   recordDelivery,
 } from "../../src/store.js";
-import type { QuestionState, Surface } from "../../src/types.js";
+import type { QuestionState } from "../../src/types.js";
+import { SURFACES, toSurface, parseLimit, parseSince } from "./params.js";
 
 const log = createLogger("questions");
 
@@ -81,14 +82,6 @@ app.all(SIGN_IN_PATH, async (req, res, next) => {
   }
 });
 
-const SURFACES: Surface[] = ["notification", "app", "web", "cli", "ios"];
-
-function toSurface(value: unknown): Surface | null {
-  return typeof value === "string" && (SURFACES as string[]).includes(value)
-    ? (value as Surface)
-    : null;
-}
-
 app.get("/health", (_req, res) => {
   const sweeper = sweeperHealth(lastSweepAt, Date.now(), SWEEP_INTERVAL_MS * 3);
 
@@ -121,6 +114,16 @@ app.post("/questions", (req, res) => {
 
 app.get("/questions", (req, res) => {
   if (!authorize(req, res)) return;
+  const limit = parseLimit(req.query.limit);
+  const since = parseSince(req.query.since);
+  if (!limit.ok) {
+    res.status(400).json({ error: limit.error });
+    return;
+  }
+  if (!since.ok) {
+    res.status(400).json({ error: since.error });
+    return;
+  }
   // Sweep before listing. A UI that renders a long-dead question as awaiting
   // an answer sends someone to answer something nobody is waiting on.
   sweepExpired();
@@ -129,6 +132,8 @@ app.get("/questions", (req, res) => {
     listQuestions({
       state: req.query.state as QuestionState | undefined,
       sessionId: typeof req.query.session_id === "string" ? req.query.session_id : undefined,
+      limit: limit.value,
+      since: since.value,
     }),
   );
 });

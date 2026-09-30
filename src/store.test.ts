@@ -236,6 +236,71 @@ describe("listing", () => {
     expect(listQuestions({ state: "answered", sessionId: "s1" })).toHaveLength(1);
     expect(listQuestions({ state: "answered", sessionId: "s2" })).toHaveLength(0);
   });
+
+  it("caps how many come back", () => {
+    ask();
+    ask();
+    ask();
+    expect(listQuestions({ limit: 2 })).toHaveLength(2);
+  });
+
+  it("since: returns what was asked or settled at or after the instant", () => {
+    const db = getDb();
+    const backdate = (id: string, column: string, modifier: string) =>
+      db.prepare(`UPDATE questions SET ${column} = datetime('now', ?) WHERE id = ?`).run(modifier, id);
+
+    const stale = ask();
+    backdate(stale.id, "created_at", "-3 hours");
+
+    const answeredLately = ask();
+    backdate(answeredLately.id, "created_at", "-3 hours");
+    answerQuestion(answeredLately.id, [{ questionId: "q1", selected: ["SQLite"] }], "supervisor");
+
+    const answeredLongAgo = ask();
+    backdate(answeredLongAgo.id, "created_at", "-3 hours");
+    answerQuestion(answeredLongAgo.id, [{ questionId: "q1", selected: ["SQLite"] }], "app");
+    backdate(answeredLongAgo.id, "answered_at", "-2 hours");
+
+    // Expired ten minutes ago: the sweeper stamps no answered_at, so the
+    // deadline is the only record of when it settled.
+    const expiredLately = ask({ ttlMinutes: -10 });
+    backdate(expiredLately.id, "created_at", "-3 hours");
+    sweepExpired();
+
+    const fresh = ask();
+
+    const since = (db.prepare(`SELECT datetime('now', '-1 hour') AS t`).get() as { t: string }).t;
+    const ids = listQuestions({ since }).map((q) => q.id);
+
+    expect(ids.sort()).toEqual([answeredLately.id, expiredLately.id, fresh.id].sort());
+    expect(ids).not.toContain(stale.id);
+    expect(ids).not.toContain(answeredLongAgo.id);
+  });
+
+  it("since: combines with state", () => {
+    const pending = ask();
+    const answered = ask();
+    answerQuestion(answered.id, [{ questionId: "q1", selected: ["SQLite"] }], "app");
+    const since = (getDb().prepare(`SELECT datetime('now', '-1 minute') AS t`).get() as { t: string }).t;
+
+    expect(listQuestions({ state: "pending", since }).map((q) => q.id)).toEqual([pending.id]);
+  });
+});
+
+describe("answering as supervisor", () => {
+  it("records supervisor as the surface that settled it", () => {
+    // Supervisor answers on the user's behalf. Recording it by name keeps an
+    // audit able to tell that apart from the user tapping this bag's own UI.
+    const q = ask();
+    const settled = answerQuestion(q.id, [{ questionId: "q1", selected: ["SQLite"] }], "supervisor");
+    expect(settled?.answered_by).toBe("supervisor");
+    expect(listResolutions(q.id)).toEqual([{ state: "answered", answered_by: "supervisor" }]);
+  });
+
+  it("dismisses as supervisor too", () => {
+    const q = ask();
+    expect(dismissQuestion(q.id, "supervisor")?.answered_by).toBe("supervisor");
+  });
 });
 
 describe("delivery", () => {

@@ -213,6 +213,13 @@ export interface ListFilter {
   state?: QuestionState;
   sessionId?: string;
   limit?: number;
+  /**
+   * Only questions asked or settled at or after this instant, as a SQLite UTC
+   * timestamp (`YYYY-MM-DD HH:MM:SS`, the shape every column here is written
+   * in). Lets a poller ask for what moved since its last look instead of
+   * re-reading the newest 50 and hoping nothing fell off the end.
+   */
+  since?: string;
 }
 
 export function listQuestions(filter: ListFilter = {}): QuestionRecord[] {
@@ -226,6 +233,15 @@ export function listQuestions(filter: ListFilter = {}): QuestionRecord[] {
   if (filter.sessionId) {
     clauses.push("session_id = ?");
     params.push(filter.sessionId);
+  }
+  if (filter.since) {
+    // An expired row has no settle time of its own: the sweeper leaves
+    // answered_at NULL on purpose. Its deadline is when it settled, give or
+    // take one sweep, so that stands in.
+    clauses.push(
+      "(created_at >= ? OR answered_at >= ? OR (state = 'expired' AND expires_at >= ?))",
+    );
+    params.push(filter.since, filter.since, filter.since);
   }
 
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
